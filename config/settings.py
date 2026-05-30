@@ -3,6 +3,7 @@ Configuration settings for HealthLink using Pydantic Settings.
 All settings loaded from environment variables with sensible defaults.
 """
 from typing import List
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -41,7 +42,7 @@ class Settings(BaseSettings):
 
     # API Configuration
     api_host: str = "0.0.0.0"
-    api_port: int = 8000
+    api_port: int = Field(default=8000, env="PORT")
     api_reload: bool = True
     cors_origins: List[str] = ["http://localhost:3000", "http://localhost:8501"]
 
