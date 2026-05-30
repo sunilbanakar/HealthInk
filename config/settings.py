@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     )
 
     # LLM Configuration (Gemini only - using langchain-google-genai)
-    gemini_api_key: str = "AIzaSyB6hiozdKR-DoXWbEfvC9aBX5b4M4Uxi-A"
+    gemini_api_key: str = "AQ.Ab8RN6IhAQH29534QpsBrJplf2u7jUE5pESsjEH29Z_qxN4ogA"
     llm_model_name: str = "gemini-2.0-flash"  # Latest stable model
     llm_temperature: float = 0.2
     llm_max_tokens: int = 2048
