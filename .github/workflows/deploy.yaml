@@ -89,7 +89,12 @@ jobs:
       - name: Configure Docker for GCR
         run: |
           gcloud auth configure-docker
-
+      - name: Create GCR repository if needed
+        run: |
+          gcloud artifacts repositories create healthlink \
+            --repository-format=docker \
+            --location=us-central1 \
+            --quiet || true
       - name: Build Docker image
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
