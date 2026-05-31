@@ -181,8 +181,7 @@ jobs:
           --cpu 2 \
           --timeout 300 \
           --max-instances 10 \
-          --min-instances 0 \
-          --set-env-vars "PORT=8080"
+          --min-instances 0 
   notify:
     name: Notify Deployment Status
     runs-on: ubuntu-latest
