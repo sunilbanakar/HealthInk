@@ -174,16 +174,17 @@ jobs:
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }}-ui \
           --image ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} \
-          --platform managed \
-          --region ${{ env.REGION }} \
-          --allow-unauthenticated \
-          --memory 2Gi \
-          --cpu 2 \
-          --timeout 300 \
-          --max-instances 10 \
-          --min-instances 0 \
-          --set-env-vars "LOG_LEVEL=INFO" \
-          --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest"
+           --platform managed \
+           --region ${{ env.REGION }} \
+           --allow-unauthenticated \
+           --memory 2Gi \
+           --cpu 2 \
+           --timeout 300 \
+           --port 8080 \
+           --max-instances 10 \
+           --min-instances 0 \
+           --set-env-vars "LOG_LEVEL=INFO,STREAMLIT_SERVER_HEADLESS=true" \
+           --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest"
   notify:
     name: Notify Deployment Status
     runs-on: ubuntu-latest
