@@ -50,9 +50,10 @@ RUN useradd -m -u 1000 healthlink && \
     chown -R healthlink:healthlink /app
 USER healthlink
 
-# Expose port
-ENV PORT=8080
+# Expose the port Cloud Run expects
 EXPOSE 8080
+# Set default PORT env var for consistency
+ENV PORT=8080
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:$PORT/api/v1/health || exit 1
