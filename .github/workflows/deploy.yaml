@@ -119,8 +119,8 @@ jobs:
             --timeout 300 \
             --max-instances 10 \
             --min-instances 0 \
-            --set-env-vars "LOG_LEVEL=INFO" \
-            --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest"
+            --set-env-vars "LOG_LEVEL=INFO,GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},API_BASE_URL=${{ env.SERVICE_URL }}/api/v1" \
+
 
       - name: Get service URL
         run: |
@@ -133,7 +133,7 @@ jobs:
 
       - name: Run health check
         run: |
-          sleep 30
+           sleep 30
            curl -m 60 -f ${{ env.SERVICE_URL }}/api/v1/health || exit 1
            echo "Health check passed!"
 
@@ -177,20 +177,22 @@ jobs:
             --region ${{ env.REGION }} \
             --format 'value(status.url)')
           echo "Service deployed to: $SERVICE_URL"
-          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV               
+          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
       - name: Deploy UI to Cloud Run
         run: |
-          gcloud run deploy ${{ env.SERVICE_NAME }}-ui \
-          --image ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} \
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+          --image ${{ env.IMAGE_NAME }}:${{ github.sha }} \
           --platform managed \
           --region ${{ env.REGION }} \
           --allow-unauthenticated \
           --memory 2Gi \
+          --port 8080 \
           --cpu 2 \
           --timeout 300 \
           --max-instances 10 \
-          --set-env-vars "API_BASE_URL=${{ env.SERVICE_URL }}/api/v1" \
-          --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest"
+          --min-instances 0 \
+          --set-env-vars "LOG_LEVEL=INFO,GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }},API_BASE_URL=${{ env.SERVICE_URL }}/api/v1"
+     
   notify:
     name: Notify Deployment Status
     runs-on: ubuntu-latest
