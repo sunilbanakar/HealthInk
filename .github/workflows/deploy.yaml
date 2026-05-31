@@ -182,9 +182,7 @@ jobs:
           --cpu 2 \
           --timeout 300 \
           --max-instances 10 \
-          --min-instances 0 \
-          --set-env-vars "API_BASE_URL=${{ env.SERVICE_URL }}/api/v1" \
-          --set-env-vars "PORT=8080" \
+          --set-env-vars "API_BASE_URL=${{ env.SERVICE_URL }}/api/v1"
           --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,PINECONE_API_KEY=PINECONE_API_KEY:latest"
   notify:
     name: Notify Deployment Status
