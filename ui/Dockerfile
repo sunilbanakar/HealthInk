@@ -18,13 +18,11 @@ RUN pip install streamlit
 
 # Copy application code
 COPY . .
-
-# Expose port 8080
-EXPOSE 8080
-
-# Health check with longer grace period for Streamlit startup
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8080/_stcore/health || exit 1
+# In ui/Dockerfile, add this near the end:
+ENV PORT=8080
+ENV STREAMLIT_SERVER_PORT=8080
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+EXPOSE 8080 
 
 # Run Streamlit app with explicit configuration
 CMD ["streamlit", "run", "ui/app.py", "--server.port=8080", "--server.address=0.0.0.0", "--server.headless=true"]
