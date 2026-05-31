@@ -28,43 +28,40 @@ async def lifespan(app: FastAPI):
     Handles startup and shutdown events.
     """
     logger.info("Starting HealthLink application...")
-
-    try:
-        db_manager = get_db_manager(settings)
-        logger.info("Database initialized successfully")
-
-        from core.database import seed_doctors
-        import json
-
-        doctors_file = "./data/doctors.csv"
-        if os.path.exists(doctors_file):
-            import pandas as pd
-            doctors_df = pd.read_csv(doctors_file)
-            doctors_data = doctors_df.to_dict('records')
-
-            with db_manager.session_scope() as session:
-                seed_doctors(session, doctors_data)
-            logger.info("Database seeded with doctor data")
-        else:
-            logger.warning(f"Doctors data file not found: {doctors_file}")
-
-    except Exception as e:
-        logger.error(f"Database initialization failed: {e}", exc_info=True)
-
-    try:
-        kb_file = "./data/symptoms_kb.json"
-        if os.path.exists(kb_file):
-            load_knowledge_base(kb_file, settings)
-            logger.info("Knowledge base loaded successfully")
-        else:
-            logger.warning(f"Knowledge base file not found: {kb_file}")
-    except Exception as e:
-        logger.error(f"RAG initialization failed: {e}", exc_info=True)
-
-    logger.info("HealthLink startup complete")
-
+    # Launch background initialization without blocking startup
+    async def init_background():
+        try:
+            db_manager = get_db_manager(settings)
+            logger.info("Database initialized successfully")
+            # Seed doctors data
+            from core.database import seed_doctors
+            import json, os
+            doctors_file = "./data/doctors.csv"
+            if os.path.exists(doctors_file):
+                import pandas as pd
+                doctors_df = pd.read_csv(doctors_file)
+                doctors_data = doctors_df.to_dict('records')
+                with db_manager.session_scope() as session:
+                    seed_doctors(session, doctors_data)
+                logger.info("Database seeded with doctor data")
+            else:
+                logger.warning(f"Doctors data file not found: {doctors_file}")
+        except Exception as e:
+            logger.error(f"Database initialization failed: {e}", exc_info=True)
+        try:
+            kb_file = "./data/symptoms_kb.json"
+            if os.path.exists(kb_file):
+                load_knowledge_base(kb_file, settings)
+                logger.info("Knowledge base loaded successfully")
+            else:
+                logger.warning(f"Knowledge base file not found: {kb_file}")
+        except Exception as e:
+            logger.error(f"RAG initialization failed: {e}", exc_info=True)
+        logger.info("HealthLink startup complete")
+    # Schedule background init task
+    import asyncio
+    asyncio.create_task(init_background())
     yield
-
     logger.info("Shutting down HealthLink...")
     logger.info("Shutdown complete")
 
