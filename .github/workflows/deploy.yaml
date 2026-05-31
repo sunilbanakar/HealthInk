@@ -162,7 +162,7 @@ jobs:
 
       - name: Build Docker image for UI
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} -f Dockerfile .
+          docker build -t ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} -f ui/Dockerfile .
           docker tag ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} ${{ env.IMAGE_NAME }}-ui:latest
 
       - name: Push Docker image to GCR
