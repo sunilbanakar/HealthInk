@@ -1,29 +1,12 @@
 # Multi-stage Dockerfile for HealthLink
 # Optimized for Google Cloud Run deployment
 
+# Builder stage
 FROM python:3.12-slim as builder
-# UI Dockerfile for Streamlit deployment
-
-FROM python:3.12-slim
-
-# Environment variables for optimal Python behavior
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-# Copy the main requirements (including Streamlit if not already present)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Ensure Streamlit is installed (if not in requirements)
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
-
-# Install system dependencies
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
@@ -32,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy requirements and install dependencies
+# Copy requirements and install dependencies in venv
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -42,8 +25,7 @@ FROM python:3.12-slim
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/opt/venv/bin:$PATH"   
-
+    PATH="/opt/venv/bin:$PATH"
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
