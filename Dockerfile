@@ -2,6 +2,20 @@
 # Optimized for Google Cloud Run deployment
 
 FROM python:3.12-slim as builder
+# UI Dockerfile for Streamlit deployment
+
+FROM python:3.12-slim
+
+# Environment variables for optimal Python behavior
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /app
+
+# Copy the main requirements (including Streamlit if not already present)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Ensure Streamlit is installed (if not in requirements)
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
