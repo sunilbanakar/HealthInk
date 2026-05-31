@@ -134,7 +134,7 @@ jobs:
       - name: Run health check
         run: |
           sleep 15
-          curl -f ${{ env.SERVICE_URL }}/health || exit 1
+          curl -f ${{ env.SERVICE_URL }}/api/v1/health || exit 1
           echo "Health check passed!"
 
   build-and-deploy-ui:
