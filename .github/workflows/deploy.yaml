@@ -170,7 +170,16 @@ jobs:
         run: |
           docker push ${{ env.IMAGE_NAME }}-ui:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}-ui:latest
-
+      
+      - name: Get service URL
+        run: |
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --format 'value(status.url)')
+          echo "Service deployed to: $SERVICE_URL"
+          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
+               
       - name: Deploy UI to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }}-ui \
