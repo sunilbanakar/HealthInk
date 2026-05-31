@@ -133,9 +133,9 @@ jobs:
 
       - name: Run health check
         run: |
-          sleep 15
-          curl -f ${{ env.SERVICE_URL }}/api/v1/health || exit 1
-          echo "Health check passed!"
+          sleep 30
+           curl -m 60 -f ${{ env.SERVICE_URL }}/api/v1/health || exit 1
+           echo "Health check passed!"
 
   build-and-deploy-ui:
     name: Build and Deploy Frontend (Streamlit) to Cloud Run
@@ -170,7 +170,6 @@ jobs:
         run: |
           docker push ${{ env.IMAGE_NAME }}-ui:${{ github.sha }}
           docker push ${{ env.IMAGE_NAME }}-ui:latest
-      
       - name: Get service URL
         run: |
           SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
@@ -178,8 +177,7 @@ jobs:
             --region ${{ env.REGION }} \
             --format 'value(status.url)')
           echo "Service deployed to: $SERVICE_URL"
-          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
-               
+          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV               
       - name: Deploy UI to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }}-ui \
