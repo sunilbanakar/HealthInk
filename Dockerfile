@@ -51,8 +51,8 @@ RUN useradd -m -u 1000 healthlink && \
 USER healthlink
 
 # Expose port
-EXPOSE 8000
-
+ENV PORT=8080
+EXPOSE 8080
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:$PORT/api/v1/health || exit 1
