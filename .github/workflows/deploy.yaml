@@ -114,6 +114,7 @@ jobs:
             --region ${{ env.REGION }} \
             --allow-unauthenticated \
             --memory 2Gi \
+            --port 8080 \
             --cpu 2 \
             --timeout 300 \
             --max-instances 10 \
