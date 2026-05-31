@@ -173,16 +173,16 @@ jobs:
       - name: Deploy UI to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }}-ui \
-            --image ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} \
-            --platform managed \
-            --region ${{ env.REGION }} \
-            --allow-unauthenticated \
-            --memory 2Gi \
-            --cpu 2 \
-            --timeout 300 \
-            --max-instances 10 \
-            --min-instances 0
-
+          --image ${{ env.IMAGE_NAME }}-ui:${{ github.sha }} \
+          --platform managed \
+          --region ${{ env.REGION }} \
+          --allow-unauthenticated \
+          --memory 2Gi \
+          --cpu 2 \
+          --timeout 300 \
+          --max-instances 10 \
+          --min-instances 0 \
+          --set-env-vars "PORT=8080"
   notify:
     name: Notify Deployment Status
     runs-on: ubuntu-latest
